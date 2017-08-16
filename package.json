@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Kekee33/bamazon#readme",
   "dependencies": {
     "inquirer": "^3.2.1",
-    "mysql": "^2.14.1"
+    "mysql": "^2.14.1",
+    "prompt": "^1.0.0"
   }
 }
