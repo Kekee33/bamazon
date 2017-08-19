@@ -11,91 +11,65 @@ var connection = mysql.createConnection({
 connection.connect(function (err){
     if (err) throw err;
     console.log("WELCOME TO BAMAZON!"); 
-    runSearch();   
 });
 
+var productMenu = function() {
 
-var runSearch = function() {
-    inquirer.prompt({
-        name: "action",
-        type: "list",
-        message: "What would you like to do?",
-        choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
-    }).then(function(answer) {
-        console.log(answer);
-        switch(answer.action.toLowerCase()) {
-            case 'view products for sale':
-                viewProducts();
-            break;
-            
-            case 'view low inventory':
-                viewLowInventory();
-            break;
-            
-            case 'add to inventory':
-                addToInventory();
-            break;
-            
-            case 'add new product':
-                addNewProduct();
-            break;
-        }
-    })
-};
+    connection.query("select * from products", function(err, products) {
+        if (err) {
+            return err;
+        };
+
+        for (var i = 0; i < products.length; i++) {
+            console.log('Item ID: ' + products[i].item_id + ' --' + ' Department: ' + products[i].department_name + ' --' + ' Product: ' + products[i].product_name + ' --' + ' Price: $' + products[i].price);
+            console.log('----------------------------------------------------------------------------');
+        };
+        //PROMPT USER TO GET ITEMS
+        prompt.get(['item_iD', 'quantity', 'Add_More (Yes or No)'], function(err, result) {
+
+            //Show what the user has picked and how many
+            console.log('item_id: ' + result.item_id);
+            console.log('quantity: ' + result.quantity);
+
+            //Loop through all of the products to see if product is in stock
+            //Confirm that the item is in stock
+            for (var i = 0; i < products.length; i++) {
+                if (result.item_id == products[i].item_id) {
+                    if (products[i].stock_quantity < result.quantity) {
+                        console.log('Sorry, we are currently out of ' + ProductName + ' please choose another product!');
+                    }
+
+                    //Get the total for the products selected	
+                    var orderTotal = (result.Quantity * products[i].price);
+                    var newStockQuantity = (products[i].StockQuantity - result.Quantity);
+
+                    //if item is in stock give the user their total
+                    if (products[i].StockQuantity >= result.Quantity) {
+                        console.log('Order total: $' + orderTotal)
+                    };
+                };
 
 
-function viewProducts(){
-    connection.query("SELECT * FROM Bamazon.Products", function(err, res) {
-        if(err) throw err;
-        console.log(res);
+            };
+            //UPDATE THE DATABASE
+            connection.query("UPDATE products SET StockQuantity =" + newStockQuantity + " WHERE ItemID = " + result.ItemID + ";", function(err, products) {
+                if (err) {
+                    return console.log(err);
+                }
+                if (result.Add_More == 'Yes') {
+                    productMenu();
+                } else {
+                    console.log('Thank you! Your order is complete. Have a wonderful day!!');
+                    process.exit();
+                };
+            });
+
+
+
+        });
+
     });
 }
 
-function viewLowInventory(){
-    connection.query("SELECT * FROM Bamazon.Products where StockQuantity < 100;", function(err, res) {
-            if(err) throw err;
-            console.log(res);
-        });
-    }
-
-function addToInventory(){
-    inquirer.prompt([{
-        name: "product",
-        type: "input",
-        message: "itemId to add to"
-    },{
-        name: "quantity",
-        type: "input",
-        message: "quantity to add"
-    }]).then(function(answer) {
-        connection.query("UPDATE products SET StockQuantity = StockQuantity + " + answer.quantity + " WHERE itemId = " + answer.product + ";", function(err, res) {
-            if(err) throw err;
-            console.log(res);
-        });
-    })
-}
-
-function addNewProduct(){
-    inquirer.prompt([{
-        name: "product",
-        type: "input",
-        message: "product to add to inventory"
-    },{
-        name: "departmentName",
-        type: "input",
-        message: "department"
-    },{
-        name: "price",
-        type: "input",
-        message: "price"
-    },{
-        name: "quantity",
-        type: "input",
-        message: "quantity to add"
-    }]).then(function(answer) {
-        connection.query("INSERT INTO `Bamazon`.`products` (`ProductName`, `DepartmentName`, `Price`, `StockQuantity`) VALUES ('" + answer.product + "', '" + answer.department + "', '" + answer.price + "', '" + answer.quantity + "');", function(err, res) {
-            if(err) throw err;
-            console.log(res);
-        });
-    })
-}
+console.log('Please choose a product from the products displayed:  ');
+productMenu();
