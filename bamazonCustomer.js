@@ -25,7 +25,7 @@ var productMenu = function() {
             console.log('----------------------------------------------------------------------------');
         };
         //PROMPT USER TO GET ITEMS
-        prompt.get(['item_iD', 'quantity', 'Add_More (Yes or No)'], function(err, result) {
+        prompt.get(['item_id', 'quantity', 'Add_More (Yes or No)'], function(err, result) {
 
             //Show what the user has picked and how many
             console.log('item_id: ' + result.item_id);
@@ -40,11 +40,12 @@ var productMenu = function() {
                     }
 
                     //Get the total for the products selected	
-                    var orderTotal = (result.Quantity * products[i].price);
-                    var newStockQuantity = (products[i].StockQuantity - result.Quantity);
+                    var orderTotal = (result.quantity * products[i].price);
+                    var newStockQuantity = (products[i].stock_quantity - result.quantity);
 
                     //if item is in stock give the user their total
-                    if (products[i].StockQuantity >= result.Quantity) {
+                    if (products[i].s
+                        tock_quantity >= result.quantity) {
                         console.log('Order total: $' + orderTotal)
                     };
                 };
