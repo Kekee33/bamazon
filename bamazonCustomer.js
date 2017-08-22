@@ -52,7 +52,7 @@ var productMenu = function() {
 
             };
             //UPDATE THE DATABASE
-            connection.query("UPDATE products SET StockQuantity =" + newStockQuantity + " WHERE ItemID = " + result.ItemID + ";", function(err, products) {
+            connection.query("UPDATE products SET StockQuantity =" + newStockQuantity + "WHERE item_id = " + result.item_id + ";", function(err, products) {
                 if (err) {
                     return console.log(err);
                 }
