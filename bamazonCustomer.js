@@ -66,24 +66,6 @@ var productMenu = function() {
             });
             });
         }
-        //         connection.query("UPDATE products SET stock_quantity = " + newStockQuantity + "WHERE item_id = " + result.item_id + ";", function(err, products) {
-        //             if (err) {
-        //                 return console.log(err);
-        //             }
-        //             if (result.Add_More == 'Yes') {
-        //                 productMenu();
-        //             } else {
-        //                 console.log('Thank you! Your order is complete. Have a wonderful day!!');
-        //                 process.exit();
-        //             };
-        //         });
-
-
-
-        //     });
-
-        // });
-
-
+        
         console.log('Please choose a product from the products displayed:  ');
         productMenu();
